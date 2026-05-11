@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" role="img" aria-label="Deportes Neon logo">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="320" y2="0">
+      <stop offset="0" stop-color="#00f5ff"/>
+      <stop offset="0.5" stop-color="#00f5ff"/>
+      <stop offset="1" stop-color="#ff00c8"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <text x="0" y="44" font-family="Rajdhani, sans-serif" font-size="34" font-weight="700" letter-spacing="1" fill="#f5f7ff">DEPORTES</text>
+  <text x="0" y="44" font-family="Rajdhani, sans-serif" font-size="34" font-weight="700" letter-spacing="1" fill="url(#g1)">NEON</text>
+  <text x="0" y="44" font-family="Rajdhani, sans-serif" font-size="34" font-weight="700" letter-spacing="1" fill="none" stroke="#00f5ff" stroke-width="1.2" filter="url(#glow)">DEPORTES NEON</text>
+</svg>
