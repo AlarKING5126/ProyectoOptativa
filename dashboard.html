@@ -33,13 +33,13 @@
         <button type="button" class="mobile-hamburger" onclick="toggleSidebar()" aria-label="Abrir menú">
           <i class="fa-solid fa-bars"></i>
         </button>
-        <div class="topbar-brand">DEPORTES NEON</div>
+        <div class="topbar-brand" role="button" onclick="navigate('dashboard', null, event)">DEPORTES NEON</div>
         <nav class="topbar-menu">
-          <a href="#" class="topbar-menu-item" onclick="navigate('dashboard', this)">Inicio</a>
-          <a href="#" class="topbar-menu-item" onclick="navigate('productos', this)">Tienda</a>
-          <a href="#" class="topbar-menu-item" onclick="navigate('pedidos', this)">Pedidos</a>
-          <a href="#" class="topbar-menu-item" onclick="navigate('tickets', this)">Soporte</a>
-          <a href="#" class="topbar-menu-item" onclick="navigate('perfil', this)">Perfil</a>
+          <a href="#" class="topbar-menu-item active" data-page="dashboard" onclick="navigate('dashboard', this)">Inicio</a>
+          <a href="#" class="topbar-menu-item" data-page="productos" onclick="navigate('productos', this)">Tienda</a>
+          <a href="#" class="topbar-menu-item" data-page="pedidos" onclick="navigate('pedidos', this)">Pedidos</a>
+          <a href="#" class="topbar-menu-item" data-page="tickets" onclick="navigate('tickets', this)">Soporte</a>
+          <a href="#" class="topbar-menu-item" data-page="perfil" onclick="navigate('perfil', this)">Perfil</a>
         </nav>
       </div>
       <div class="topbar-search">
@@ -319,6 +319,9 @@
         <div class="form-group"><label>Tipo</label>
           <select id="ev-tipo" class="modal-input"><option value="Evento">Evento</option><option value="Reunión">Reunión</option><option value="Tarea">Tarea</option><option value="Recordatorio">Recordatorio</option></select>
         </div>
+      </div>
+      <div class="form-group"><label>Visibilidad</label>
+        <select id="ev-publico" class="modal-input"><option value="true">Público</option><option value="false">Privado</option></select>
       </div>
       <div class="modal-footer">
         <button class="btn-sm btn-ghost" onclick="closeModal('modal-nuevo-evento')">Cancelar</button>

@@ -90,10 +90,19 @@ async function loadCategorias() {
   }
 }
 
+const HOME_PAGE = 'inicio';
+
 function navigate(pageId, linkEl, event) {
   event?.preventDefault();
+  const currentPageId = document.querySelector('.page.active')?.id?.replace(/^page-/,'');
+  if ((linkEl?.classList.contains('active') || pageId === currentPageId) && pageId !== HOME_PAGE) {
+    pageId = HOME_PAGE;
+    linkEl = document.querySelector(`.topbar-menu-item[data-page="${pageId}"]`) || document.querySelector(`.nav-item[data-page="${pageId}"]`);
+  }
+
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.topbar-menu-item').forEach(n => n.classList.remove('active'));
   if (window.innerWidth <= 640) {
     document.getElementById('sidebar')?.classList.remove('open');
     document.querySelector('.topbar-menu')?.classList.remove('open');
@@ -101,7 +110,13 @@ function navigate(pageId, linkEl, event) {
   const page = document.getElementById('page-' + pageId);
   if (page) page.classList.add('active');
   if (linkEl) linkEl.classList.add('active');
-  else { const n = document.querySelector(`[data-page="${pageId}"]`); if (n) n.classList.add('active'); }
+
+  const navTarget = document.querySelector(`.nav-item[data-page="${pageId}"]`);
+  if (navTarget) navTarget.classList.add('active');
+
+  const topbarTarget = document.querySelector(`.topbar-menu-item[data-page="${pageId}"]`);
+  if (topbarTarget) topbarTarget.classList.add('active');
+
   if (pageId === 'inicio')    loadDashboard();
   if (pageId === 'tienda')    loadProductos();
   if (pageId === 'favoritos') loadFavoritos();
@@ -581,7 +596,7 @@ function renderCalendar() {
     const it = d===today.getDate() && m===today.getMonth() && y===today.getFullYear();
     const dateKey = '' + y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
     const eventType = eventMap.get(dateKey);
-    cells += '<div class="cal-day' + (it ? ' today' : '') + (eventType ? ' has-event tipo-' + eventType : '') + '" onclick="abrirEventoDia(' + y + ',' + (m+1) + ',' + d + ')">' + d + '</div>';
+    cells += '<div class="cal-day' + (it ? ' today' : '') + (eventType ? ' has-event tipo-' + eventType : '') + '">' + d + '</div>';
   }
   const rem = 42 - firstDay - daysInMonth; for (let d = 1; d <= rem; d++) cells += '<div class="cal-day other-month">' + d + '</div>';
   main.innerHTML = '<div class="cal-header"><button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button><span class="cal-title" style="color:var(--magenta)">' + monthNames[m] + ' ' + y + '</span><button class="cal-nav-btn" onclick="changeMonth(1)">›</button></div><div class="cal-grid">' + headers + cells + '</div>';
@@ -608,7 +623,7 @@ function renderEventPanel() {
     </div>`;
   }).join('');
 }
-function abrirEventoDia(y,m,d) { const fi = document.getElementById('ev-fecha'); if (fi) fi.value = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}T10:00`; openModal('modal-nuevo-evento'); }
+function abrirEventoDia() { return; }
 async function crearEvento() {
   const titulo = document.getElementById('ev-titulo')?.value.trim(); const desc = document.getElementById('ev-desc')?.value.trim();
   const fecha = document.getElementById('ev-fecha')?.value; const tipo = document.getElementById('ev-tipo')?.value||'Evento';

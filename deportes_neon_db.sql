@@ -317,9 +317,12 @@ CREATE TABLE eventos (
     fecha_hora  TIMESTAMPTZ   NOT NULL,
     tipo        VARCHAR(20)   NOT NULL DEFAULT 'Evento'
                     CHECK (tipo IN ('Evento','Reunión','Tarea','Recordatorio')),
+    publico     BOOLEAN       NOT NULL DEFAULT TRUE,
     created_at  TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMPTZ   NOT NULL DEFAULT NOW()
 );
+
+COMMENT ON COLUMN eventos.publico IS 'Indica si el evento es visible para clientes (público) o solo para administradores (privado)';
 
 COMMENT ON TABLE eventos IS 'Eventos del calendario por usuario';
 COMMENT ON COLUMN eventos.tipo IS 'Evento | Reunión | Tarea | Recordatorio';

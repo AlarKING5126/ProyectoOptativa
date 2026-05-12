@@ -175,8 +175,8 @@ const Eventos = {
     const params = year && month ? `?year=${year}&month=${month}` : '';
     return apiGet('/eventos' + params);
   },
-  crear(titulo, descripcion, fecha_hora, tipo) {
-    return apiPost('/eventos', { titulo, descripcion, fecha_hora, tipo });
+  crear(titulo, descripcion, fecha_hora, tipo, publico = true) {
+    return apiPost('/eventos', { titulo, descripcion, fecha_hora, tipo, publico });
   },
   actualizar(id, datos)  { return apiPut(`/eventos/${id}`, datos); },
   eliminar(id)           { return apiDelete(`/eventos/${id}`); },

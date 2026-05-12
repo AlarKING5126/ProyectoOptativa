@@ -110,13 +110,31 @@ async function loadCategorias() {
 }
 
 // ── Navegación ──────────────────────────────────────────────
+const HOME_PAGE = 'dashboard';
+
 function navigate(pageId, linkEl, event) {
   event?.preventDefault();
+  const currentPageId = document.querySelector('.page.active')?.id?.replace(/^page-/,'');
+  if ((linkEl?.classList.contains('active') || pageId === currentPageId) && pageId !== HOME_PAGE) {
+    pageId = HOME_PAGE;
+    linkEl = document.querySelector(`.topbar-menu-item[data-page="${pageId}"]`) || document.querySelector(`.nav-item[data-page="${pageId}"]`);
+  }
+
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const page = document.getElementById('page-' + pageId); if (page) page.classList.add('active');
+  document.querySelectorAll('.topbar-menu-item').forEach(n => n.classList.remove('active'));
+
+  const page = document.getElementById('page-' + pageId);
+  if (page) page.classList.add('active');
+
   if (linkEl) linkEl.classList.add('active');
-  else { const n = document.querySelector(`[data-page="${pageId}"]`); if (n) n.classList.add('active'); }
+
+  const navTarget = document.querySelector(`.nav-item[data-page="${pageId}"]`);
+  if (navTarget) navTarget.classList.add('active');
+
+  const topbarTarget = document.querySelector(`.topbar-menu-item[data-page="${pageId}"]`);
+  if (topbarTarget) topbarTarget.classList.add('active');
+
   if (pageId === 'dashboard')  loadDashboard();
   if (pageId === 'productos')  loadProductos();
   if (pageId === 'favoritos')  loadFavoritos();
@@ -762,6 +780,8 @@ function abrirNuevoEvento(){
   if (titulo) titulo.value = '';
   if (desc) desc.value = '';
   if (tipo) tipo.value = 'Evento';
+  const publicoSelect = document.getElementById('ev-publico');
+  if (publicoSelect) publicoSelect.value = 'true';
   if (fecha) {
     const now = new Date();
     fecha.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}T${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
@@ -772,7 +792,7 @@ function abrirNuevoEvento(){
 function renderEventPanel(){
   const panel=document.getElementById('eventos-list'); if(!panel) return;
   if(!ui.eventos||ui.eventos.length===0){panel.innerHTML='<div class="no-events"><i class="fa-regular fa-calendar-xmark"></i><p>No hay eventos próximos</p></div>';return;}
-  panel.innerHTML=ui.eventos.map(ev=>{const d=new Date(ev.fecha_hora);return`<div class="event-item tipo-${ev.tipo.toLowerCase()}" onclick="editarEvento(${ev.id})" style="cursor:pointer"><p class="event-title">${ev.titulo}</p><p class="event-meta">${d.toLocaleDateString('es-CO',{day:'2-digit',month:'short'})}, ${d.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})}</p>${ev.descripcion?`<p class="event-meta">${ev.descripcion}</p>`:''}<span class="event-type-badge">${ev.tipo}</span></div>`;}).join('');
+  panel.innerHTML=ui.eventos.map(ev=>{const d=new Date(ev.fecha_hora);return`<div class="event-item tipo-${ev.tipo.toLowerCase()}" onclick="editarEvento(${ev.id})" style="cursor:pointer"><p class="event-title">${ev.titulo}</p><p class="event-meta">${d.toLocaleDateString('es-CO',{day:'2-digit',month:'short'})}, ${d.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})}</p>${ev.descripcion?`<p class="event-meta">${ev.descripcion}</p>`:''}<span class="event-type-badge">${ev.tipo}</span><span class="event-visibility-badge ${ev.publico ? 'public' : 'private'}">${ev.publico ? 'Público' : 'Privado'}</span></div>`;}).join('');
 }
 function abrirEventoDia(y,m,d){
   ui.eventoEditandoId = null;
@@ -784,6 +804,8 @@ function abrirEventoDia(y,m,d){
   if (titulo) titulo.value = '';
   if (desc) desc.value = '';
   if (tipo) tipo.value = 'Evento';
+  const publicoSelect = document.getElementById('ev-publico');
+  if (publicoSelect) publicoSelect.value = 'true';
   if (fi) fi.value = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}T10:00`;
   openModal('modal-nuevo-evento');
 }
@@ -794,8 +816,9 @@ async function guardarEvento(){
 async function crearEvento(){
   const titulo=document.getElementById('ev-titulo')?.value.trim();const desc=document.getElementById('ev-desc')?.value.trim();
   const fecha=document.getElementById('ev-fecha')?.value;const tipo=document.getElementById('ev-tipo')?.value||'Evento';
+  const publico = document.getElementById('ev-publico')?.value === 'true';
   if(!titulo||!fecha){showNeonAlert('Título y fecha son obligatorios','error');return;}
-  try{await API.Eventos.crear(titulo,desc,fecha,tipo);document.getElementById('ev-titulo').value='';document.getElementById('ev-desc').value='';document.getElementById('ev-fecha').value='';closeModal('modal-nuevo-evento');showNeonAlert(`Evento "${titulo}" creado`,'success');await loadEventos();}
+  try{await API.Eventos.crear(titulo,desc,fecha,tipo,publico);document.getElementById('ev-titulo').value='';document.getElementById('ev-desc').value='';document.getElementById('ev-fecha').value='';closeModal('modal-nuevo-evento');showNeonAlert(`Evento "${titulo}" creado`,'success');await loadEventos();}
   catch(err){showNeonAlert(err.message,'error');}
 }
 async function editarEvento(id){
@@ -806,6 +829,7 @@ async function editarEvento(id){
   document.getElementById('ev-desc').value = event.descripcion || '';
   document.getElementById('ev-fecha').value = event.fecha_hora ? event.fecha_hora.slice(0,16) : '';
   document.getElementById('ev-tipo').value = event.tipo || 'Evento';
+  document.getElementById('ev-publico').value = event.publico ? 'true' : 'false';
   setModalEventoState('Editar Evento','Guardar',true);
   openModal('modal-nuevo-evento');
 }
@@ -814,8 +838,9 @@ async function actualizarEvento(){
   if (!id) return crearEvento();
   const titulo=document.getElementById('ev-titulo')?.value.trim();const desc=document.getElementById('ev-desc')?.value.trim();
   const fecha=document.getElementById('ev-fecha')?.value;const tipo=document.getElementById('ev-tipo')?.value||'Evento';
+  const publico = document.getElementById('ev-publico')?.value === 'true';
   if(!titulo||!fecha){showNeonAlert('Título y fecha son obligatorios','error');return;}
-  try{await API.Eventos.actualizar(id,{titulo,descripcion:desc,fecha_hora:fecha,tipo});closeModal('modal-nuevo-evento');showNeonAlert(`Evento "${titulo}" actualizado`,'success');ui.eventoEditandoId = null;await loadEventos();}
+  try{await API.Eventos.actualizar(id,{titulo,descripcion:desc,fecha_hora:fecha,tipo,publico});closeModal('modal-nuevo-evento');showNeonAlert(`Evento "${titulo}" actualizado`,'success');ui.eventoEditandoId = null;await loadEventos();}
   catch(err){showNeonAlert(err.message,'error');}
 }
 async function eliminarEvento(){

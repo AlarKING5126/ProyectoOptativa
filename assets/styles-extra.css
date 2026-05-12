@@ -717,6 +717,11 @@
 .tipo-reunion      .event-type-badge { background: rgba(255,0,200,0.12); color: var(--magenta); }
 .tipo-tarea        .event-type-badge { background: rgba(255,230,0,0.12);  color: var(--yellow); }
 .tipo-recordatorio .event-type-badge { background: rgba(0,255,136,0.12);  color: var(--green); }
+.event-visibility-badge {
+  display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.3px; margin-top: 4px; margin-left: 6px;
+}
+.event-visibility-badge.public { background: rgba(0,200,100,0.12); color: var(--green); }
+.event-visibility-badge.private { background: rgba(255,80,80,0.12); color: var(--red); }
 
 .no-events {
   text-align: center; padding: 30px 10px; color: var(--text-muted);

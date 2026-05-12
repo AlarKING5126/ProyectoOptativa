@@ -333,7 +333,6 @@ body.dash-body {
 
 .mobile-hamburger,
 .mobile-topbar-toggle {
-  display:flex;
   border:none;
   background:rgba(255,255,255,0.08);
   color:#fff;
@@ -345,6 +344,9 @@ body.dash-body {
   justify-content:center;
   font-size:1.1rem;
 }
+
+.mobile-hamburger { display:flex; }
+.mobile-topbar-toggle { display:none; }
 
 .mobile-hamburger i,
 .mobile-topbar-toggle i { pointer-events:none; }
@@ -429,6 +431,7 @@ body.dash-body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size:1.45rem; font-weight:900; letter-spacing:2px;
   color:var(--cyan); text-shadow:0 0 14px rgba(0,245,255,0.6);
   white-space:nowrap;
+  cursor:pointer;
 }
 .topbar-menu {
   display:flex; align-items:center; justify-content:flex-start; gap:10px;
@@ -966,22 +969,37 @@ body.dash-body {
 .modal-title { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size:1rem; font-weight:700; color:var(--cyan); margin-bottom:4px; }
 .modal-sub   { color:var(--text-muted); font-size:0.82rem; margin-bottom:20px; }
 
-.modal .form-group { margin-bottom:14px; animation:none; }
+..modal .form-group { margin-bottom:14px; animation:none; }
 .modal .form-group label {
   display:block; font-size:0.78rem; font-weight:600;
   color:var(--text-muted); letter-spacing:1px;
   text-transform:uppercase; margin-bottom:6px;
 }
 .modal-input {
-  width:100%; background:var(--input-bg);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:8px; padding:9px 12px;
+  width:100%; background:rgba(12,18,26,0.85);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:14px; padding:12px 14px;
   color:var(--text-primary); font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size:0.9rem; outline:none; transition:border-color 0.25s;
+  font-size:0.95rem; outline:none; transition:border-color 0.25s, box-shadow 0.25s, background 0.25s;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
 }
-.modal-input:focus { border-color:var(--cyan); }
-.modal-input::placeholder { color:#3a4458; }
-textarea.modal-input { resize:vertical; }
+.modal-input:focus {
+  border-color: rgba(0,245,255,0.7);
+  box-shadow: 0 0 0 4px rgba(0,245,255,0.08);
+  background: rgba(8,12,18,0.95);
+}
+.modal-input::placeholder { color:#5a6b7b; }
+.modal-input::-webkit-calendar-picker-indicator {
+  filter: invert(1) sepia(0.25) saturate(3) hue-rotate(165deg);
+  opacity: 0.8;
+  cursor: pointer;
+}
+.modal-input[type="datetime-local"],
+.modal-input[type="date"],
+.modal-input[type="time"] {
+  min-height:44px;
+}
+textarea.modal-input { resize:vertical; min-height:110px; }
 
 .modal-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
 .modal-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }

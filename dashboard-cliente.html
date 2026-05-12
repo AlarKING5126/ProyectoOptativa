@@ -34,13 +34,13 @@
         <button type="button" class="mobile-topbar-toggle" onclick="toggleTopbarMenu()" aria-label="Abrir navegación">
           <i class="fa-solid fa-list"></i>
         </button>
-        <div class="topbar-brand">DEPORTES NEON</div>
+        <div class="topbar-brand" role="button" onclick="navigate('inicio', null, event)">DEPORTES NEON</div>
         <nav class="topbar-menu">
-          <a href="#" class="topbar-menu-item" onclick="navigate('inicio', this)">Inicio</a>
-          <a href="#" class="topbar-menu-item" onclick="navigate('tienda', this)">Tienda</a>
-          <a href="#" class="topbar-menu-item" onclick="navigate('pedidos', this)">Pedidos</a>
-          <a href="#" class="topbar-menu-item" onclick="navigate('tickets', this)">Soporte</a>
-          <a href="#" class="topbar-menu-item" onclick="navigate('perfil', this)">Perfil</a>
+          <a href="#" class="topbar-menu-item active" data-page="inicio" onclick="navigate('inicio', this)">Inicio</a>
+          <a href="#" class="topbar-menu-item" data-page="tienda" onclick="navigate('tienda', this)">Tienda</a>
+          <a href="#" class="topbar-menu-item" data-page="pedidos" onclick="navigate('pedidos', this)">Pedidos</a>
+          <a href="#" class="topbar-menu-item" data-page="tickets" onclick="navigate('tickets', this)">Soporte</a>
+          <a href="#" class="topbar-menu-item" data-page="perfil" onclick="navigate('perfil', this)">Perfil</a>
         </nav>
       </div>
       <div class="topbar-search">
@@ -196,7 +196,6 @@
       <section class="page" id="page-calendario">
         <div class="page-header">
           <div><h1 class="page-title neon-cyan">Calendario de Eventos</h1><p class="page-sub">Planifica y organiza tus eventos</p></div>
-          <button class="btn-new-event" onclick="openModal('modal-nuevo-evento')"><i class="fa-solid fa-plus"></i> Nuevo Evento</button>
         </div>
         <div class="calendar-layout">
           <div class="calendar-main" id="calendar-main-wrap"></div>
@@ -248,33 +247,7 @@
       </div>
     </div>
   </div>
-  <!-- ═══ MODAL: NUEVO EVENTO ═══ -->
-  <div class="modal-overlay" id="modal-nuevo-evento" onclick="closeModalOutside(event,'modal-nuevo-evento')">
-    <div class="modal">
-      <button class="modal-close" onclick="closeModal('modal-nuevo-evento')">×</button>
-      <h2 class="modal-title" style="color:var(--yellow)">Nuevo Evento</h2>
-      <p class="modal-sub">Crea un nuevo evento en el calendario</p>
-      <div class="form-group" style="margin-top:16px"><label>Título</label><input type="text" id="ev-titulo" class="modal-input" placeholder="Nombre del evento"></div>
-      <div class="form-group"><label>Descripción</label><textarea id="ev-desc" class="modal-input" rows="3" placeholder="Detalles opcionales..."></textarea></div>
-      <div class="modal-grid-2">
-        <div class="form-group"><label>Fecha y Hora</label><input type="datetime-local" id="ev-fecha" class="modal-input"></div>
-        <div class="form-group"><label>Tipo</label>
-          <select id="ev-tipo" class="modal-input">
-            <option value="Evento">Evento</option>
-            <option value="Reunión">Reunión</option>
-            <option value="Tarea">Tarea</option>
-            <option value="Recordatorio">Recordatorio</option>
-          </select>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-sm btn-ghost" onclick="closeModal('modal-nuevo-evento')">Cancelar</button>
-        <button class="btn-sm btn-yellow" onclick="crearEvento()"><i class="fa-solid fa-calendar-plus"></i> Crear</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- ═══ MODAL: AVATAR ═══ -->
   <div class="modal-overlay" id="modal-avatar" onclick="closeModalOutside(event,'modal-avatar')">
     <div class="modal">
       <button class="modal-close" onclick="closeModal('modal-avatar')">×</button>
