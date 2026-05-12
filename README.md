@@ -40,26 +40,72 @@ deportes-neon-v3/
 
 ---
 
-## ⚡ Instalación rápida
+## ⚡ Instalación en Linux
 
-### 1. Base de datos PostgreSQL
+### 1. Instalar dependencias del sistema
 
-```sql
--- En psql como superusuario:
-CREATE DATABASE deportes_neon;
-\c deportes_neon
-\i deportes_neon_db.sql
+Para distribuciones basadas en Debian/Ubuntu:
+
+```bash
+sudo apt update
+sudo apt install -y nodejs npm postgresql postgresql-contrib
 ```
 
-### 2. Configurar variables de entorno
+Para otras distribuciones, usa el gestor equivalente y asegúrate de tener Node.js, npm y PostgreSQL instalados.
+
+### 2. Configurar PostgreSQL y la base de datos
+
+```bash
+sudo -u postgres psql
+```
+
+En el prompt de PostgreSQL:
+
+```sql
+CREATE DATABASE deportes_neon;
+CREATE USER deportes_user WITH PASSWORD 'tu_password';
+GRANT ALL PRIVILEGES ON DATABASE deportes_neon TO deportes_user;
+\q
+```
+
+Cargar el script inicial de la base de datos:
+
+```bash
+sudo -u postgres psql -d deportes_neon -f deportes_neon_db.sql
+```
+
+### 3. Configurar variables de entorno
 
 ```bash
 cd api
 cp .env.example .env
-# Editar .env con tus datos de PostgreSQL
 ```
 
-### 3. Instalar dependencias e iniciar
+Editar `api/.env` con los datos de tu instalación.
+
+#### Variables de entorno necesarias
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=deportes_neon
+DB_USER=deportes_user
+DB_PASSWORD=tu_password
+JWT_SECRET=una_clave_segura
+PORT=3000
+```
+
+- `DB_HOST`: host de PostgreSQL.
+- `DB_PORT`: puerto de PostgreSQL.
+- `DB_NAME`: nombre de la base de datos.
+- `DB_USER`: usuario de PostgreSQL.
+- `DB_PASSWORD`: contraseña del usuario.
+- `JWT_SECRET`: clave secreta para tokens JWT.
+- `PORT`: puerto donde corre el backend.
+
+> Guarda este archivo en `api/.env` y no lo subas a git.
+
+### 4. Instalar dependencias e iniciar el servidor
 
 ```bash
 cd api
@@ -67,11 +113,13 @@ npm install
 npm start
 ```
 
-### 4. Abrir en el navegador
+### 5. Abrir el proyecto en el navegador
 
 ```
 http://localhost:3000
 ```
+
+> Si deseas ejecutar el backend en segundo plano, usa `npm run start` dentro de `api` o una herramienta como `pm2`.
 
 ---
 
@@ -149,3 +197,60 @@ http://localhost:3000
 - **Node.js** v18+
 - **PostgreSQL** v14+
 - Navegador moderno con soporte ES2020
+
+---
+
+## 🚀 Ejecución en producción
+
+Para correr la aplicación en un entorno de producción en Linux:
+
+1. Instala dependencias en `api`:
+
+```bash
+cd api
+npm install
+```
+
+2. Asegúrate de tener el archivo `api/.env` configurado.
+
+3. Ejecuta el servidor con `pm2` o `node`:
+
+```bash
+npm install -g pm2
+pm start
+# o
+pm run start
+```
+
+4. Si usas `pm2`:
+
+```bash
+pm start
+pm2 save
+pm2 startup
+```
+
+5. Abre el navegador en:
+
+```bash
+http://localhost:3000
+```
+
+---
+
+## 🧰 Resolución de problemas comunes
+
+- `Error: connect ECONNREFUSED 127.0.0.1:5432`
+  - Verifica que PostgreSQL esté en ejecución: `sudo systemctl status postgresql`.
+  - Revisa `api/.env` y confirma `DB_HOST=localhost` y `DB_PORT=5432`.
+
+- `Error: relation "..." does not exist`
+  - Ejecuta de nuevo el script SQL: `sudo -u postgres psql -d deportes_neon -f deportes_neon_db.sql`.
+
+- `npm install` falla con permisos
+  - Usa `sudo npm install` solo si es necesario, preferible usar un entorno local sin sudo.
+
+- `npm start` muestra `PORT already in use`
+  - Cambia el puerto en el archivo de configuración o mata el proceso actual con `sudo lsof -i :3000` y `kill`.
+
+---
