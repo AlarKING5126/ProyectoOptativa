@@ -40,9 +40,16 @@ deportes-neon-v3/
 
 ---
 
-## ⚡ Instalación en Linux
+## ⚡ Instalación
 
-### 1. Instalar dependencias del sistema
+### 1. Requisitos del sistema
+
+- Node.js v18+
+- npm
+- PostgreSQL v14+
+- Navegador moderno
+
+### 2. Instalación en Linux
 
 Para distribuciones basadas en Debian/Ubuntu:
 
@@ -53,7 +60,27 @@ sudo apt install -y nodejs npm postgresql postgresql-contrib
 
 Para otras distribuciones, usa el gestor equivalente y asegúrate de tener Node.js, npm y PostgreSQL instalados.
 
-### 2. Configurar PostgreSQL y la base de datos
+### 3. Instalación en Windows
+
+1. Descarga e instala Node.js desde https://nodejs.org/
+2. Descarga e instala PostgreSQL desde https://www.postgresql.org/
+3. Si usas PowerShell, abre una terminal con permisos de administrador.
+4. Abre `psql` con el usuario `postgres`:
+
+```powershell
+psql -U postgres
+```
+
+5. En el prompt de PostgreSQL, crea la base de datos y el usuario:
+
+```sql
+CREATE DATABASE deportes_neon;
+CREATE USER deportes_user WITH PASSWORD 'tu_password';
+GRANT ALL PRIVILEGES ON DATABASE deportes_neon TO deportes_user;
+\q
+```
+
+### 4. Configurar PostgreSQL y la base de datos
 
 ```bash
 sudo -u postgres psql
@@ -74,7 +101,7 @@ Cargar el script inicial de la base de datos:
 sudo -u postgres psql -d deportes_neon -f deportes_neon_db.sql
 ```
 
-### 3. Configurar variables de entorno
+### 5. Configurar variables de entorno
 
 ```bash
 cd api
@@ -105,7 +132,7 @@ PORT=3000
 
 > Guarda este archivo en `api/.env` y no lo subas a git.
 
-### 4. Instalar dependencias e iniciar el servidor
+### 5. Instalar dependencias e iniciar el servidor
 
 ```bash
 cd api
@@ -113,7 +140,7 @@ npm install
 npm start
 ```
 
-### 5. Abrir el proyecto en el navegador
+### 6. Abrir el proyecto en el navegador
 
 ```
 http://localhost:3000
