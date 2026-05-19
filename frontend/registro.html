@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deportes Neon — Registro</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🏋️</text></svg>">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .card::before { border-top-color: var(--magenta); border-left-color: var(--magenta); }
+    .card::after  { border-bottom-color: var(--cyan);  border-right-color: var(--cyan);  }
+    .card { border-color: rgba(255,0,200,0.2); box-shadow: 0 0 40px rgba(255,0,200,0.08), 0 0 80px rgba(0,245,255,0.05), inset 0 1px 0 rgba(255,255,255,0.05); }
+    .form-input:focus { border-color: var(--magenta) !important; box-shadow: 0 0 0 3px rgba(255,0,200,0.1) !important; }
+    .input-wrapper:focus-within .input-icon { color: var(--magenta) !important; }
+    body::before { background: radial-gradient(ellipse at 80% 20%, rgba(255,0,200,0.09) 0%, transparent 50%), radial-gradient(ellipse at 20% 80%, rgba(0,245,255,0.07) 0%, transparent 50%); }
+  </style>
+</head>
+<body class="auth-body">
+  <div class="particles" id="particles"></div>
+  <div class="card">
+    <div class="logo">
+      <h1><span class="word1">DEPORTES</span> <span class="word2">NEON</span></h1>
+    </div>
+    <p class="logo-sub">Crea tu cuenta para empezar</p>
+    <div class="divider"></div>
+
+    <form id="registerForm" onsubmit="handleRegister(event)" novalidate>
+      <div class="form-group">
+        <label class="label-magenta">Nombre completo</label>
+        <div class="input-wrapper">
+          <i class="fa-regular fa-user input-icon"></i>
+          <input type="text" class="form-input" placeholder="Tu nombre" id="regName" autocomplete="name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="label-magenta">Correo electrónico</label>
+        <div class="input-wrapper">
+          <i class="fa-regular fa-envelope input-icon"></i>
+          <input type="email" class="form-input" placeholder="usuario@ejemplo.com" id="regEmail" autocomplete="email">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="label-magenta">Contraseña</label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-lock input-icon"></i>
+          <input type="password" class="form-input" placeholder="••••••••" id="regPassword" autocomplete="new-password">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="label-magenta">Confirmar contraseña</label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-lock input-icon"></i>
+          <input type="password" class="form-input" placeholder="••••••••" id="regConfirm" autocomplete="new-password">
+        </div>
+      </div>
+      <button type="submit" class="btn-primary btn-magenta-full" style="margin-top:8px" id="regBtn">
+        Registrarse
+      </button>
+    </form>
+
+    <p class="footer-link">
+      ¿Ya tienes cuenta? <a href="index.html" class="link-magenta">Inicia sesión aquí</a>
+    </p>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script>
+    async function handleRegister(e) {
+      e.preventDefault();
+      const nombre   = document.getElementById('regName').value.trim();
+      const email    = document.getElementById('regEmail').value.trim().toLowerCase();
+      const password = document.getElementById('regPassword').value;
+      const confirm  = document.getElementById('regConfirm').value;
+      const btn      = document.getElementById('regBtn');
+
+      if (!nombre || !email || !password)
+        { showNeonAlert('Completa todos los campos', 'error'); return; }
+      if (password !== confirm)
+        { showNeonAlert('Las contraseñas no coinciden', 'error'); return; }
+      if (password.length < 6)
+        { showNeonAlert('La contraseña debe tener al menos 6 caracteres', 'error'); return; }
+
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> CREANDO CUENTA...';
+      btn.disabled  = true;
+
+      try {
+        await Auth.registro(nombre, email, password);
+        showNeonAlert('¡Cuenta creada exitosamente!', 'success');
+        setTimeout(() => { window.location.href = 'dashboard-cliente.html'; }, 900);
+      } catch (err) {
+        showNeonAlert(err.message || 'Error al crear cuenta', 'error');
+        btn.innerHTML = 'Registrarse';
+        btn.disabled  = false;
+      }
+    }
+  </script>
+</body>
+</html>

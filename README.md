@@ -1,203 +1,157 @@
-# 🏋️ DEPORTES NEON — Full-Stack App
+# 🏋️ Deportes Neon
 
-Sistema de gestión de artículos deportivos con autenticación JWT,
-panel admin, panel cliente y base de datos PostgreSQL.
+Proyecto full-stack de tienda de artículos deportivos con backend en Node.js + Express, base de datos MySQL y frontend estático.
 
 ---
 
-## 🗂️ Estructura del proyecto
+## 📁 Estructura del proyecto
 
 ```
 deportes-neon-v3/
-├── api/                    ← Backend Node.js + Express
-│   ├── server.js           ← Servidor principal
-│   ├── db.js               ← Pool de conexiones PostgreSQL
-│   ├── .env.example        ← Variables de entorno (copiar a .env)
-│   ├── middleware/
-│   │   └── auth.js         ← Guard JWT + rol admin
-│   └── routes/
-│       ├── auth.js         ← Login, registro, perfil
-│       ├── productos.js    ← CRUD catálogo + filtros
-│       ├── carrito.js      ← Carrito de compra
-│       ├── favoritos.js    ← Wishlist
-│       ├── pedidos.js      ← Checkout y seguimiento
-│       ├── tickets.js      ← Soporte al cliente
-│       ├── eventos.js      ← Calendario
-│       └── dashboard.js    ← Métricas admin/cliente
-├── assets/
-│   ├── api.js              ← Cliente API del frontend (nuevo)
-│   ├── cliente.js          ← Lógica dashboard cliente
-│   ├── dashboard.js        ← Lógica dashboard admin
-│   ├── app.js              ← Partículas + alertas
-│   ├── styles.css          ← Estilos base
-│   └── styles-extra.css    ← Estilos adicionales
-├── index.html              ← Login
-├── registro.html           ← Registro
-├── dashboard-cliente.html  ← Panel cliente
-├── dashboard.html          ← Panel admin
-└── deportes_neon_db.sql    ← Script de base de datos
+├── backend/                  ← API REST Node.js + Express
+│   ├── server.js             ← Servidor principal
+│   ├── config/db.js          ← Conexión MySQL
+│   ├── .env.example          ← Ejemplo de configuración
+│   ├── middleware/           ← Middlewares de autenticación y rate limit
+│   └── routes/               ← Endpoints de la API
+├── database/                 ← Script MySQL de la base de datos
+│   └── deportes_neon_mysql.sql
+├── frontend/                 ← Frontend estático (HTML/CSS/JS)
+│   ├── assets/
+│   │   ├── css/
+│   │   └── js/
+│   ├── index.html
+│   ├── registro.html
+│   ├── dashboard.html
+│   └── dashboard-cliente.html
+├── INICIAR-SERVIDOR.bat      ← Atajo Windows para arrancar backend
+└── README.md                ← Documentación del proyecto
 ```
 
 ---
 
-## ⚡ Instalación
+## ⚡ Requisitos
 
-### 1. Requisitos del sistema
-
-- Node.js v18+
-- npm
-- PostgreSQL v14+
+- Node.js v18+ y npm
+- MySQL
 - Navegador moderno
 
-### 2. Instalación en Linux
+---
 
-Para distribuciones basadas en Debian/Ubuntu:
+## 🚀 Instalación rápida
 
-```bash
-sudo apt update
-sudo apt install -y nodejs npm postgresql postgresql-contrib
-```
-
-Para otras distribuciones, usa el gestor equivalente y asegúrate de tener Node.js, npm y PostgreSQL instalados.
-
-### 3. Instalación en Windows
-
-1. Descarga e instala Node.js desde https://nodejs.org/
-2. Descarga e instala PostgreSQL desde https://www.postgresql.org/
-3. Si usas PowerShell, abre una terminal con permisos de administrador.
-4. Abre `psql` con el usuario `postgres`:
-
-```powershell
-psql -U postgres
-```
-
-5. En el prompt de PostgreSQL, crea la base de datos y el usuario:
-
-```sql
-CREATE DATABASE deportes_neon;
-CREATE USER deportes_user WITH PASSWORD 'tu_password';
-GRANT ALL PRIVILEGES ON DATABASE deportes_neon TO deportes_user;
-\q
-```
-
-### 4. Configurar PostgreSQL y la base de datos
+1. Instala Node.js y MySQL.
+2. Importa la base de datos desde `database/deportes_neon_mysql.sql`.
+3. Copia el archivo de ejemplo de configuración:
 
 ```bash
-sudo -u postgres psql
+cd backend
+copy .env.example .env
 ```
 
-En el prompt de PostgreSQL:
-
-```sql
-CREATE DATABASE deportes_neon;
-CREATE USER deportes_user WITH PASSWORD 'tu_password';
-GRANT ALL PRIVILEGES ON DATABASE deportes_neon TO deportes_user;
-\q
-```
-
-Cargar el script inicial de la base de datos:
-
-```bash
-sudo -u postgres psql -d deportes_neon -f deportes_neon_db.sql
-```
-
-### 5. Configurar variables de entorno
-
-```bash
-cd api
-cp .env.example .env
-```
-
-Editar `api/.env` con los datos de tu instalación.
-
-#### Variables de entorno necesarias
+4. Edita `backend/.env` con tus datos de conexión:
 
 ```env
 DB_HOST=localhost
-DB_PORT=5432
+DB_PORT=3306
 DB_NAME=deportes_neon
-DB_USER=deportes_user
-DB_PASSWORD=tu_password
+DB_USER=root
+DB_PASSWORD=tu_password_aqui
 JWT_SECRET=una_clave_segura
+JWT_EXPIRES_IN=7d
 PORT=3000
+NODE_ENV=development
+CORS_ORIGINS=http://localhost:5500,http://127.0.0.1:5500,http://localhost:3000
 ```
 
-- `DB_HOST`: host de PostgreSQL.
-- `DB_PORT`: puerto de PostgreSQL.
-- `DB_NAME`: nombre de la base de datos.
-- `DB_USER`: usuario de PostgreSQL.
-- `DB_PASSWORD`: contraseña del usuario.
-- `JWT_SECRET`: clave secreta para tokens JWT.
-- `PORT`: puerto donde corre el backend.
-
-> Guarda este archivo en `api/.env` y no lo subas a git.
-
-### 5. Instalar dependencias e iniciar el servidor
+5. Instala dependencias del backend:
 
 ```bash
-cd api
+cd backend
 npm install
+```
+
+6. Inicia el servidor:
+
+```bash
 npm start
 ```
 
-### 6. Abrir el proyecto en el navegador
+7. Abre el frontend en el navegador:
 
-```
+```text
 http://localhost:3000
 ```
 
-> Si deseas ejecutar el backend en segundo plano, usa `npm run start` dentro de `api` o una herramienta como `pm2`.
+> En Windows puedes usar `INICIAR-SERVIDOR.bat` desde la raíz del proyecto.
 
 ---
 
-## 🔑 Credenciales de prueba
+## 🔧 Archivos clave
 
-| Rol     | Email                        | Contraseña  |
-|---------|------------------------------|-------------|
-| Admin   | admin@deportesneon.com       | admin123    |
-| Cliente | cliente@deportesneon.com     | cliente123  |
+- `backend/server.js` — servidor principal Express
+- `backend/config/db.js` — conexión MySQL con `mysql2`
+- `backend/routes/` — rutas de la API
+- `frontend/` — frontend HTML, CSS y JavaScript
+- `database/deportes_neon_mysql.sql` — script de base de datos
 
 ---
 
-## 🌐 Endpoints API
+## 🧪 Rutas principales de la API
 
 ### Auth
-| Método | Ruta                  | Descripción              |
-|--------|-----------------------|--------------------------|
-| POST   | /api/auth/login       | Iniciar sesión           |
-| POST   | /api/auth/registro    | Crear cuenta             |
-| GET    | /api/auth/me          | Perfil del usuario       |
-| PUT    | /api/auth/me          | Actualizar perfil        |
-| PUT    | /api/auth/password    | Cambiar contraseña       |
+
+| Método | Ruta                   | Descripción            |
+|--------|------------------------|------------------------|
+| POST   | /api/auth/login        | Iniciar sesión         |
+| POST   | /api/auth/registro     | Crear cuenta           |
+| GET    | /api/auth/me           | Perfil del usuario     |
+| PUT    | /api/auth/me           | Actualizar perfil      |
+| PUT    | /api/auth/password     | Cambiar contraseña     |
 
 ### Productos
-| Método | Ruta                  | Descripción              |
-|--------|-----------------------|--------------------------|
-| GET    | /api/productos        | Listar con filtros       |
-| GET    | /api/productos/:id    | Detalle de producto      |
-| POST   | /api/productos        | Crear (admin)            |
-| PUT    | /api/productos/:id    | Actualizar (admin)       |
-| DELETE | /api/productos/:id    | Eliminar (admin)         |
-| GET    | /api/productos/cat/lista | Listar categorías     |
+
+| Método | Ruta                          | Descripción              |
+|--------|-------------------------------|--------------------------|
+| GET    | /api/productos                | Listar productos         |
+| GET    | /api/productos/:id            | Detalle de producto      |
+| POST   | /api/productos                | Crear producto (admin)   |
+| PUT    | /api/productos/:id            | Actualizar producto      |
+| DELETE | /api/productos/:id            | Eliminar producto        |
 
 ### Carrito
-| Método | Ruta                       | Descripción           |
-|--------|----------------------------|-----------------------|
-| GET    | /api/carrito               | Ver carrito           |
-| POST   | /api/carrito               | Agregar producto      |
-| PUT    | /api/carrito/:productoId   | Cambiar cantidad      |
-| DELETE | /api/carrito/:productoId   | Quitar producto       |
-| DELETE | /api/carrito               | Vaciar carrito        |
+
+| Método | Ruta                              | Descripción           |
+|--------|-----------------------------------|-----------------------|
+| GET    | /api/carrito                      | Ver carrito           |
+| POST   | /api/carrito                      | Agregar producto      |
+| PUT    | /api/carrito/:productoId          | Cambiar cantidad      |
+| DELETE | /api/carrito/:productoId          | Quitar producto       |
+| DELETE | /api/carrito                      | Vaciar carrito        |
 
 ### Pedidos
-| Método | Ruta                       | Descripción           |
-|--------|----------------------------|-----------------------|
-| GET    | /api/pedidos               | Mis pedidos / todos   |
-| GET    | /api/pedidos/:id           | Detalle de pedido     |
-| POST   | /api/pedidos/checkout      | Crear pedido          |
-| PUT    | /api/pedidos/:id/estado    | Cambiar estado (admin)|
+
+| Método | Ruta                              | Descripción                 |
+|--------|-----------------------------------|-----------------------------|
+| GET    | /api/pedidos                      | Listar pedidos              |
+| GET    | /api/pedidos/:id                  | Detalle de pedido           |
+| POST   | /api/pedidos/checkout             | Crear pedido                |
+| PUT    | /api/pedidos/:id/estado           | Actualizar estado (admin)   |
 
 ### Tickets
+
+| Método | Ruta                              | Descripción                 |
+|--------|-----------------------------------|-----------------------------|
+| GET    | /api/tickets                      | Listar tickets              |
+| POST   | /api/tickets                     | Crear ticket                |
+| PUT    | /api/tickets/:id                 | Actualizar ticket           |
+
+---
+
+## ⚠️ Nota
+
+No subas `backend/.env` al repositorio. Usa `backend/.env.example` como plantilla para tu configuración local.
+
 | Método | Ruta                          | Descripción          |
 |--------|-------------------------------|----------------------|
 | GET    | /api/tickets                  | Listar tickets       |

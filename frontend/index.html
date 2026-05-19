@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deportes Neon — Iniciar Sesión</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🏋️</text></svg>">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="auth-body">
+  <div class="particles" id="particles"></div>
+  <div class="card">
+    <div class="logo">
+      <h1><span class="word1">DEPORTES</span> <span class="word2">NEON</span></h1>
+    </div>
+    <p class="logo-sub">Sistema de Gestión de Artículos Deportivos</p>
+    <div class="divider"></div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)" novalidate>
+      <div class="form-group">
+        <label class="label-cyan">Correo electrónico</label>
+        <div class="input-wrapper">
+          <i class="fa-regular fa-envelope input-icon"></i>
+          <input type="email" class="form-input" placeholder="usuario@ejemplo.com"
+                 id="loginEmail" autocomplete="email">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="label-cyan">Contraseña</label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-lock input-icon"></i>
+          <input type="password" class="form-input" placeholder="••••••••"
+                 id="loginPassword" autocomplete="current-password">
+        </div>
+      </div>
+      <a href="recuperar.html" class="forgot-link">¿Olvidaste tu contraseña?</a>
+      <button type="submit" class="btn-primary btn-cyan-full" id="loginBtn">
+        Iniciar Sesión
+      </button>
+    </form>
+
+    <p class="footer-link">
+      ¿No tienes cuenta? <a href="registro.html">Regístrate aquí</a>
+    </p>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script>
+    // Si ya hay sesión activa, redirigir al dashboard correcto
+    (function checkSession() {
+      if (Auth.isLoggedIn()) {
+        const user = Auth.getUser();
+        window.location.href = user?.rol === 'admin' ? 'dashboard.html' : 'dashboard-cliente.html';
+      }
+    })();
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const pass  = document.getElementById('loginPassword').value;
+      const btn   = document.getElementById('loginBtn');
+
+      if (!email || !pass) {
+        showNeonAlert('Completa todos los campos', 'error'); return;
+      }
+
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> VERIFICANDO...';
+      btn.disabled  = true;
+
+      try {
+        const user = await Auth.login(email, pass);
+        showNeonAlert(`¡Bienvenido, ${user.nombre}!`, 'success');
+        setTimeout(() => {
+          window.location.href = user.rol === 'admin' ? 'dashboard.html' : 'dashboard-cliente.html';
+        }, 900);
+      } catch (err) {
+        showNeonAlert(err.message || 'Credenciales incorrectas', 'error');
+        btn.innerHTML = 'Iniciar Sesión';
+        btn.disabled  = false;
+      }
+    }
+  </script>
+</body>
+</html>

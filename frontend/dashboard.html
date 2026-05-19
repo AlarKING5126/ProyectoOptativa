@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deportes Neon — Panel Admin</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🏋️</text></svg>">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/styles-extra.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body class="dash-body">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo"><span class="logo-dep">DEPORTES</span> <span class="logo-neon">NEON</span></div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-page="dashboard" onclick="navigate('dashboard',this)"><i class="fa-solid fa-gauge-high"></i><span>Panel</span></a>
+      <a href="#" class="nav-item" data-page="tickets" onclick="navigate('tickets',this)"><i class="fa-solid fa-ticket-simple"></i><span>Soporte</span><span class="badge badge-cyan" id="badge-tickets">2</span></a>
+      <a href="#" class="nav-item" data-page="productos" onclick="navigate('productos',this)"><i class="fa-solid fa-box-open"></i><span>Productos</span></a>
+      <a href="#" class="nav-item" data-page="favoritos" onclick="navigate('favoritos',this)"><i class="fa-solid fa-heart"></i><span>Favoritos</span><span class="badge badge-magenta" id="badge-fav">0</span></a>
+      <a href="#" class="nav-item" data-page="carrito" onclick="navigate('carrito',this)"><i class="fa-solid fa-cart-shopping"></i><span>Carrito</span><span class="badge badge-cyan" id="badge-cart">0</span></a>
+      <a href="#" class="nav-item" data-page="pedidos" onclick="navigate('pedidos',this)"><i class="fa-solid fa-clipboard-list"></i><span>Pedidos</span></a>
+      <a href="#" class="nav-item" data-page="calendario" onclick="navigate('calendario',this)"><i class="fa-regular fa-calendar"></i><span>Calendario</span></a>
+      <a href="#" class="nav-item" data-page="usuarios" onclick="navigate('usuarios',this)"><i class="fa-solid fa-users"></i><span>Usuarios</span></a>
+      <a href="#" class="nav-item" data-page="perfil" onclick="navigate('perfil',this)"><i class="fa-regular fa-user"></i><span>Mi Perfil</span></a>
+    </nav>
+  </aside>
+
+  <div class="main-wrap">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button type="button" class="mobile-hamburger" onclick="toggleSidebar()" aria-label="Abrir menú">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="topbar-brand" role="button" onclick="navigate('dashboard', null, event)">DEPORTES NEON</div>
+        <nav class="topbar-menu">
+          <a href="#" class="topbar-menu-item active" data-page="dashboard" onclick="navigate('dashboard', this)">Inicio</a>
+          <a href="#" class="topbar-menu-item" data-page="productos" onclick="navigate('productos', this)">Tienda</a>
+          <a href="#" class="topbar-menu-item" data-page="pedidos" onclick="navigate('pedidos', this)">Pedidos</a>
+          <a href="#" class="topbar-menu-item" data-page="tickets" onclick="navigate('tickets', this)">Soporte</a>
+          <a href="#" class="topbar-menu-item" data-page="perfil" onclick="navigate('perfil', this)">Perfil</a>
+        </nav>
+      </div>
+      <div class="topbar-search">
+        <div class="header-search-wrap">
+          <input id="dashboard-search-input" type="text" placeholder="Buscar productos..." oninput="searchHeaderProducts(this.value)" onkeydown="if(event.key==='Enter') searchHeaderProducts(this.value)">
+          <button type="button" onclick="searchHeaderProducts(document.getElementById('dashboard-search-input')?.value)"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button type="button" class="topbar-cart-btn" onclick="navigate('carrito', document.querySelector('[data-page=carrito]'))" title="Ver carrito">
+          <i class="fa-solid fa-cart-shopping"></i>
+        </button>
+        <div class="topbar-profile" onclick="navigate('perfil', document.querySelector('[data-page=perfil]'))" role="button" title="Ir a mi perfil">
+          <div class="topbar-avatar" id="topbar-avatar" title="Foto de perfil"><i class="fa-solid fa-user"></i></div>
+          <div class="admin-info"><span class="admin-name" id="admin-display-name">Admin User</span><span class="admin-role"><i class="fa-solid fa-circle" style="color:#00ff88;font-size:8px;margin-right:4px;"></i>Administrador</span></div>
+        </div>
+        <a href="#" onclick="Auth.logout()" class="btn-logout" title="Salir"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+      </div>
+    </header>
+
+    <main class="page-content">
+
+      <!-- ══ DASHBOARD ══ -->
+      <section class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title neon-green">Panel de Deportes</h1>
+            <p class="page-sub">Bienvenido a tu panel de control</p>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card"><div><p class="stat-label">Total Productos</p><p class="stat-value" id="stat-total">8</p></div><div class="stat-icon" style="color:var(--cyan)"><i class="fa-solid fa-box-open"></i></div></div>
+          <div class="stat-card"><div><p class="stat-label">Total Usuarios</p><p class="stat-value" id="stat-usuarios">0</p></div><div class="stat-icon" style="color:var(--yellow)"><i class="fa-solid fa-users"></i></div></div>
+          <div class="stat-card"><div><p class="stat-label">Clientes</p><p class="stat-value" id="stat-clientes">0</p></div><div class="stat-icon" style="color:var(--cyan)"><i class="fa-solid fa-user"></i></div></div>
+          <div class="stat-card"><div><p class="stat-label">Pedidos</p><p class="stat-value" id="stat-pedidos">2</p></div><div class="stat-icon" style="color:var(--magenta)"><i class="fa-solid fa-clipboard-list"></i></div></div>
+          <div class="stat-card"><div><p class="stat-label">Mis Favoritos</p><p class="stat-value" id="stat-favs">0</p></div><div class="stat-icon" style="color:var(--yellow)"><i class="fa-solid fa-heart"></i></div></div>
+          <div class="stat-card"><div><p class="stat-label">Solicitudes Abiertas</p><p class="stat-value stat-ticket" id="stat-tickets">2</p></div><div class="stat-icon" style="color:var(--cyan)"><i class="fa-solid fa-ticket-simple"></i></div></div>
+        </div>
+        <div class="section-block">
+          <h2 class="section-title neon-green">Productos Destacados</h2><p class="section-sub">Los más destacados del inventario</p>
+          <div class="featured-grid" id="featured-grid"></div>
+          <button class="btn-ver-todos" onclick="navigate('productos',document.querySelector('[data-page=productos]'))">Ver todos los productos</button>
+        </div>
+        <div class="two-col-grid">
+          <div class="section-block"><h2 class="section-title neon-green">Mejor Valorados</h2><p class="section-sub">Mejores calificaciones</p><div class="top-list" id="top-rated-list"></div></div>
+          <div class="section-block">
+            <div class="low-stock-header">
+              <div>
+                <h2 class="section-title" style="color:var(--magenta);margin-bottom:6px">Alerta de Stock Bajo</h2>
+                <p class="section-sub">Productos con inventario crítico</p>
+              </div>
+              <button class="btn-ver-todos" onclick="navigate('productos',document.querySelector('[data-page=productos]'))">Ir a productos</button>
+            </div>
+            <div id="low-stock-summary" class="low-stock-summary"></div>
+            <div id="low-stock-list"></div>
+          </div>
+        </div>
+        <div class="section-block tickets-section">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px">
+            <div><h2 class="section-title neon-green" style="margin-bottom:4px">Solicitudes Recientes</h2><p class="section-sub">Solicitudes de soporte de clientes</p></div>
+            <button class="btn-new-ticket" onclick="navigate('tickets',document.querySelector('[data-page=tickets]'))"><i class="fa-solid fa-list"></i> Ver todos</button>
+          </div>
+          <div class="ticket-list" id="dashboard-tickets"></div>
+        </div>
+        <div class="cart-bar" id="cart-bar" onclick="navigate('carrito',document.querySelector('[data-page=carrito]'))">
+          <i class="fa-solid fa-cart-shopping" style="color:var(--cyan);font-size:1.3rem;"></i>
+          <div><span class="cart-bar-msg">Tienes <strong id="cart-bar-count">0</strong> productos en el carrito</span><span class="cart-bar-total">Total: <strong id="cart-bar-total" style="color:var(--green)">$0.00</strong></span></div>
+          <button class="btn-sm btn-cyan" style="margin-left:auto">Ver Carrito</button>
+        </div>
+      </section>
+
+      <!-- ══ TICKETS ══ -->
+      <section class="page" id="page-tickets">
+        <div class="page-header"><div><h1 class="page-title neon-green">Soporte</h1><p class="page-sub">Gestión de solicitudes de clientes</p></div></div>
+        <div class="ticket-list" id="tickets-list"></div>
+      </section>
+
+      <!-- ══ USUARIOS ══ -->
+      <section class="page" id="page-usuarios">
+        <div class="page-header">
+          <div><h1 class="page-title">Usuarios</h1><p class="page-sub">Cuentas registradas y detalles de cada usuario</p></div>
+        </div>
+        <div id="usuarios-content"></div>
+      </section>
+
+      <!-- ══ PRODUCTOS ══ -->
+      <section class="page" id="page-productos">
+        <div class="page-header">
+          <div><h1 class="page-title">Productos</h1><p class="page-sub">Gestiona tu inventario</p></div>
+          <button class="btn-sm btn-green" onclick="openModal('modal-nuevo-producto')"><i class="fa-solid fa-plus"></i> Nuevo Producto</button>
+        </div>
+        <div class="filters-row">
+          <div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="search-input" placeholder="Buscar productos..." oninput="filterProductos()"></div>
+          <div class="custom-select-wrap"><i class="fa-solid fa-filter"></i>
+            <select id="cat-filter" onchange="filterProductos()">
+              <option value="">Todas las categorías</option>
+              <option value="futbol">Futbol</option>
+              <option value="calzado">Calzado</option>
+              <option value="baloncesto">Baloncesto</option>
+              <option value="tenis">Tenis</option>
+              <option value="yoga-fitness">Yoga y Fitness</option>
+              <option value="ciclismo">Ciclismo</option>
+              <option value="natacion">Natacion</option>
+              <option value="gimnasio">Gimnasio</option>
+            </select>
+          </div>
+          <div class="custom-select-wrap">
+            <select id="sort-filter" onchange="filterProductos()">
+              <option value="nombre">Nombre</option>
+              <option value="precio-asc">Precio ↑</option>
+              <option value="precio-desc">Precio ↓</option>
+              <option value="rating-desc">Valoración</option>
+              <option value="stock-desc">Mayor Stock</option>
+            </select>
+          </div>
+        </div>
+        <div class="filters-advanced">
+          <div class="filter-group"><label>TIPO</label><select id="tipo-filter" onchange="filterProductos()"><option value="">Compra y Alquiler</option><option value="compra">Solo Compra</option><option value="alquiler">Solo Alquiler</option></select></div>
+          <div class="filter-group"><label>ESTADO</label><select id="estado-filter" onchange="filterProductos()"><option value="">Todos los estados</option><option value="activo">Activo</option><option value="en-uso">En uso</option><option value="desuso">Desuso</option></select></div>
+          <div class="filter-group"><label>FECHA DESDE</label><input type="date" id="fecha-desde" onchange="filterProductos()"></div>
+          <div class="filter-group"><label>FECHA HASTA</label><input type="date" id="fecha-hasta" onchange="filterProductos()"></div>
+          <button class="filter-reset" onclick="resetFiltros()"><i class="fa-solid fa-rotate-left"></i> Limpiar</button>
+        </div>
+        <div class="products-grid" id="products-grid"></div>
+      </section>
+
+      <!-- ══ CATEGORÍAS ══ -->
+      <!-- ══ FAVORITOS ══ -->
+      <section class="page" id="page-favoritos">
+        <div class="page-header"><div><h1 class="page-title" style="color:var(--magenta)">Favoritos</h1><p class="page-sub">Tus productos guardados</p></div></div>
+        <div class="products-grid" id="favorites-grid"></div>
+        <div class="empty-state" id="empty-fav" style="display:none"><i class="fa-regular fa-heart" style="font-size:3rem;color:var(--magenta);margin-bottom:16px;"></i><p>No tienes productos en favoritos</p></div>
+        <div class="favs-total-bar" id="favs-total-bar" style="display:none">
+          <div class="favs-total-item"><p class="lbl">Total de favoritos</p><p class="val" id="favs-count">0</p></div>
+          <div class="favs-total-item" style="text-align:right"><p class="lbl">Valor total</p><p class="val money" id="favs-valor">$0.00</p></div>
+        </div>
+      </section>
+
+      <!-- ══ CARRITO ══ -->
+      <section class="page" id="page-carrito">
+        <div class="page-header">
+          <div><h1 class="page-title" style="color:var(--cyan)">Carrito de Compras</h1><p class="page-sub">Artículos seleccionados</p></div>
+          <button class="btn-sm btn-danger" onclick="vaciarCarrito()"><i class="fa-solid fa-trash"></i> Vaciar</button>
+        </div>
+        <div class="cart-layout" id="carrito-wrap" style="display:none">
+          <div class="cart-col-left" id="cart-col-left"></div>
+          <div class="cart-col-right" id="cart-col-right"></div>
+        </div>
+        <div class="empty-state" id="empty-cart"><i class="fa-solid fa-cart-shopping" style="font-size:3rem;color:var(--cyan);margin-bottom:16px;"></i><p>Tu carrito está vacío</p></div>
+      </section>
+
+      <!-- ══ PEDIDOS ══ -->
+      <section class="page" id="page-pedidos">
+        <div class="page-header"><div><h1 class="page-title" style="color:var(--yellow)">Seguimiento de Pedidos</h1><p class="page-sub">Gestiona todos los pedidos</p></div></div>
+        <div id="orders-list"></div>
+      </section>
+
+      <!-- ══ CALENDARIO ══ -->
+      <section class="page" id="page-calendario">
+        <div class="page-header">
+          <div><h1 class="page-title" style="color:var(--cyan)">Calendario de Eventos</h1><p class="page-sub">Planifica y organiza tus eventos</p></div>
+          <button class="btn-new-event" onclick="abrirNuevoEvento()"><i class="fa-solid fa-plus"></i> Nuevo Evento</button>
+        </div>
+        <div class="calendar-layout">
+          <div class="calendar-main" id="calendar-main-wrap"></div>
+          <div class="calendar-panel">
+            <p class="calendar-panel-title">Próximos Eventos</p>
+            <p class="calendar-panel-sub">Eventos programados</p>
+            <div id="eventos-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ PERFIL ══ -->
+      <section class="page" id="page-perfil">
+        <div class="page-header"><div><h1 class="page-title" style="color:var(--magenta)">Mi Perfil</h1><p class="page-sub">Gestiona tu información personal</p></div></div>
+        <div class="profile-page-grid">
+          <div class="profile-main"><div class="profile-card-v2" id="perfil-card"></div></div>
+        </div>
+        <span id="p-total" style="display:none">8</span>
+        <span id="p-fav" style="display:none">0</span>
+        <span id="p-cart" style="display:none">0</span>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ═══ MODAL: NUEVO PRODUCTO ═══ -->
+  <div class="modal-overlay" id="modal-nuevo-producto" onclick="closeModalOutside(event,'modal-nuevo-producto')">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('modal-nuevo-producto')">×</button>
+      <h2 class="modal-title">Nuevo Producto</h2><p class="modal-sub">Completa la información del nuevo producto</p>
+      <div class="modal-grid-2">
+        <div class="form-group"><label>Nombre</label><input type="text" id="np-nombre" class="modal-input" placeholder="Nombre del producto"></div>
+        <div class="form-group"><label>Categoría</label><select id="np-cat" class="modal-input"><option value="">Seleccionar...</option><option value="futbol">Futbol</option><option value="calzado">Calzado</option><option value="baloncesto">Baloncesto</option><option value="tenis">Tenis</option><option value="yoga-fitness">Yoga y Fitness</option><option value="ciclismo">Ciclismo</option><option value="natacion">Natacion</option><option value="gimnasio">Gimnasio</option></select></div>
+      </div>
+      <div class="form-group"><label>Descripción</label><textarea id="np-desc" class="modal-input" rows="3" placeholder="Descripción..."></textarea></div>
+      <div class="modal-grid-3">
+        <div class="form-group"><label>Precio ($)</label><input type="number" id="np-precio" class="modal-input" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>Stock</label><input type="number" id="np-stock" class="modal-input" placeholder="0" min="0"></div>
+        <div class="form-group"><label>Valoración</label><input type="number" id="np-rating" class="modal-input" value="5" min="1" max="5" step="0.1"></div>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group"><label>Tipo</label><select id="np-tipo" class="modal-input"><option value="compra">Compra</option><option value="alquiler">Alquiler</option></select></div>
+        <div class="form-group"><label>Estado</label><select id="np-estado" class="modal-input"><option value="activo">Activo</option><option value="en-uso">En uso</option><option value="desuso">Desuso</option></select></div>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group"><label>Fecha Inicio</label><input type="date" id="np-fecha-inicio" class="modal-input"></div>
+        <div class="form-group"><label>Fecha Fin</label><input type="date" id="np-fecha-fin" class="modal-input"></div>
+      </div>
+      <div class="form-group"><label>URL de Imagen</label><input type="url" id="np-img" class="modal-input" placeholder="https://..."></div>
+      <div class="form-group"><label>Destacado</label><select id="np-featured" class="modal-input"><option value="false">No</option><option value="true">Sí</option></select></div>
+      <div class="modal-footer">
+        <button class="btn-sm btn-ghost" onclick="closeModal('modal-nuevo-producto')">Cancelar</button>
+        <button class="btn-sm btn-green" onclick="crearProducto()">Crear</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: EDITAR PRODUCTO ═══ -->
+  <div class="modal-overlay" id="modal-editar-producto" onclick="closeModalOutside(event,'modal-editar-producto')">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('modal-editar-producto')">×</button>
+      <h2 class="modal-title" style="color:var(--cyan)">Editar Producto</h2><p class="modal-sub">Modifica la información del producto</p>
+      <input type="hidden" id="ep-id">
+      <div class="modal-grid-2">
+        <div class="form-group"><label>Nombre</label><input type="text" id="ep-nombre" class="modal-input"></div>
+        <div class="form-group"><label>Categoría</label><select id="ep-cat" class="modal-input"><option value="futbol">Futbol</option><option value="calzado">Calzado</option><option value="baloncesto">Baloncesto</option><option value="tenis">Tenis</option><option value="yoga-fitness">Yoga y Fitness</option><option value="ciclismo">Ciclismo</option><option value="natacion">Natacion</option><option value="gimnasio">Gimnasio</option></select></div>
+      </div>
+      <div class="form-group"><label>Descripción</label><textarea id="ep-desc" class="modal-input" rows="3"></textarea></div>
+      <div class="modal-grid-3">
+        <div class="form-group"><label>Precio ($)</label><input type="number" id="ep-precio" class="modal-input" min="0" step="0.01"></div>
+        <div class="form-group"><label>Stock</label><input type="number" id="ep-stock" class="modal-input" min="0"></div>
+        <div class="form-group"><label>Valoración</label><input type="number" id="ep-rating" class="modal-input" min="1" max="5" step="0.1"></div>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group"><label>Tipo</label><select id="ep-tipo" class="modal-input"><option value="compra">Compra</option><option value="alquiler">Alquiler</option></select></div>
+        <div class="form-group"><label>Estado</label><select id="ep-estado" class="modal-input"><option value="activo">Activo</option><option value="en-uso">En uso</option><option value="desuso">Desuso</option></select></div>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group"><label>Fecha Inicio</label><input type="date" id="ep-fecha-inicio" class="modal-input"></div>
+        <div class="form-group"><label>Fecha Fin</label><input type="date" id="ep-fecha-fin" class="modal-input"></div>
+      </div>
+      <div class="form-group"><label>URL de Imagen</label><input type="url" id="ep-img" class="modal-input"></div>
+      <div class="form-group"><label>Destacado</label><select id="ep-featured" class="modal-input"><option value="false">No</option><option value="true">Sí</option></select></div>
+      <div class="modal-footer">
+        <button class="btn-sm btn-ghost" onclick="closeModal('modal-editar-producto')">Cancelar</button>
+        <button class="btn-sm btn-cyan" onclick="guardarEdicion()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: TICKET DETALLE Y RESPUESTA ═══ -->
+  <div class="modal-overlay" id="modal-ticket-detalle" onclick="closeModalOutside(event,'modal-ticket-detalle')">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('modal-ticket-detalle')">×</button>
+      <h2 class="modal-title">Responder ticket</h2>
+      <p class="modal-sub">Ver y responder mensajes del cliente</p>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button class="btn-sm btn-ghost" onclick="closeModal('modal-ticket-detalle')">Cerrar</button>
+        <button class="btn-sm btn-cyan" id="ticket-reply-submit" onclick="enviarRespuestaTicket()">Enviar respuesta</button>
+        <button class="btn-sm btn-green" id="ticket-close-ticket" onclick="cerrarTicketDesdeModal()"><i class="fa-solid fa-check"></i> Cerrar ticket</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: NUEVO EVENTO ═══ -->
+  <div class="modal-overlay" id="modal-nuevo-evento" onclick="closeModalOutside(event,'modal-nuevo-evento')">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('modal-nuevo-evento')">×</button>
+      <h2 class="modal-title" id="ev-modal-title" style="color:var(--yellow)">Nuevo Evento</h2><p class="modal-sub">Crea un nuevo evento en el calendario</p>
+      <div class="form-group" style="margin-top:16px"><label>Título</label><input type="text" id="ev-titulo" class="modal-input" placeholder="Nombre del evento"></div>
+      <div class="form-group"><label>Descripción</label><textarea id="ev-desc" class="modal-input" rows="3" placeholder="Detalles opcionales..."></textarea></div>
+      <div class="modal-grid-2">
+        <div class="form-group"><label>Fecha y Hora</label><input type="datetime-local" id="ev-fecha" class="modal-input"></div>
+        <div class="form-group"><label>Tipo</label>
+          <select id="ev-tipo" class="modal-input"><option value="Evento">Evento</option><option value="Reunión">Reunión</option><option value="Tarea">Tarea</option><option value="Recordatorio">Recordatorio</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label>Visibilidad</label>
+        <select id="ev-publico" class="modal-input"><option value="true">Público</option><option value="false">Privado</option></select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-sm btn-ghost" onclick="closeModal('modal-nuevo-evento')">Cancelar</button>
+        <button class="btn-sm btn-cyan" id="ev-delete-btn" style="display:none;margin-right:8px" onclick="eliminarEvento()"><i class="fa-solid fa-trash"></i> Eliminar</button>
+        <button class="btn-sm btn-yellow" id="ev-submit-btn" onclick="guardarEvento()"><i class="fa-solid fa-calendar-plus"></i> Crear</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: AVATAR ═══ -->
+  <div class="modal-overlay" id="modal-avatar" onclick="closeModalOutside(event,'modal-avatar')">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('modal-avatar')">×</button>
+      <h2 class="modal-title">Cambiar Avatar</h2><p class="modal-sub">Sube una imagen o usa una URL</p>
+      <div class="avatar-modal-tabs" style="margin-top:16px">
+        <button class="avatar-tab active" data-tab="file">Subir archivo</button>
+        <button class="avatar-tab" data-tab="url">URL de imagen</button>
+      </div>
+      <div id="tab-file" class="avatar-tab-content active">
+        <div class="avatar-drop-zone" id="avatar-drop-zone"><i class="fa-solid fa-cloud-arrow-up"></i><p>Arrastra una imagen o haz clic para seleccionar</p><p style="font-size:0.75rem;margin-top:6px;color:var(--text-muted)">PNG, JPG, WEBP — máx. 5 MB</p></div>
+        <input type="file" id="avatar-file-input" accept="image/*" style="display:none">
+      </div>
+      <div id="tab-url" class="avatar-tab-content">
+        <div class="form-group"><label>URL de la imagen</label><input type="url" id="avatar-url-input" class="modal-input" placeholder="https://ejemplo.com/avatar.jpg"></div>
+        <button class="btn-sm btn-ghost" style="margin-top:6px" onclick="previewAvatarUrl()"><i class="fa-solid fa-eye"></i> Previsualizar</button>
+      </div>
+      <div class="avatar-preview-wrap" id="avatar-preview-wrap" style="display:none;margin-top:16px"></div>
+      <div class="modal-footer">
+        <button class="btn-sm btn-ghost" onclick="closeModal('modal-avatar')">Cancelar</button>
+        <button class="btn-sm btn-cyan" onclick="guardarAvatar()"><i class="fa-solid fa-check"></i> Guardar Avatar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: PAGO ═══ -->
+  <div class="modal-overlay" id="modal-pago" onclick="closeModalOutside(event,'modal-pago')">
+    <div class="modal modal-pago">
+      <button class="modal-close" onclick="closeModal('modal-pago')">×</button>
+      <h2 class="modal-title"><i class="fa-solid fa-lock" style="color:var(--green);font-size:1rem;margin-right:8px"></i>Pago Seguro</h2>
+      <p class="modal-sub">Tu transacción está cifrada y protegida con SSL</p>
+
+      <div id="pago-resumen"></div>
+
+      <div class="card-brands">
+        <span class="card-brand visa">VISA</span>
+        <span class="card-brand mc">MC</span>
+        <span class="card-brand amex">AMEX</span>
+        <span class="card-brand pse">PSE</span>
+      </div>
+
+      <div class="form-group">
+        <label>Nombre en la tarjeta</label>
+        <div class="pay-input-wrap">
+          <i class="fa-solid fa-user pay-icon"></i>
+          <input type="text" id="pay-nombre" class="modal-input" placeholder="JUAN PÉREZ" style="text-transform:uppercase" autocomplete="cc-name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Número de tarjeta</label>
+        <div class="pay-input-wrap">
+          <i class="fa-regular fa-credit-card pay-icon"></i>
+          <input type="text" id="pay-numero" class="modal-input" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCardNumber(this)" inputmode="numeric" autocomplete="cc-number">
+          <span class="card-type-label" id="card-type-label"></span>
+        </div>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Vencimiento</label>
+          <div class="pay-input-wrap">
+            <i class="fa-regular fa-calendar pay-icon"></i>
+            <input type="text" id="pay-expiry" class="modal-input" placeholder="MM/AA" maxlength="5" oninput="formatExpiry(this)" inputmode="numeric" autocomplete="cc-exp">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>CVV <i class="fa-solid fa-circle-question" style="color:var(--text-muted);font-size:11px" title="3 dígitos al respaldo de tu tarjeta"></i></label>
+          <div class="pay-input-wrap">
+            <i class="fa-solid fa-key pay-icon"></i>
+            <input type="text" id="pay-cvv" class="modal-input" placeholder="•••" maxlength="4" inputmode="numeric" autocomplete="cc-csc">
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Dirección de envío</label>
+        <div class="pay-input-wrap">
+          <i class="fa-solid fa-location-dot pay-icon"></i>
+          <input type="text" id="pay-direccion" class="modal-input" placeholder="Calle 123 #45-67, Bogotá" autocomplete="shipping street-address">
+        </div>
+      </div>
+
+      <div class="pay-security">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Pago 100% seguro · Cifrado SSL · Datos no almacenados</span>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-sm btn-ghost" onclick="closeModal('modal-pago')">Cancelar</button>
+        <button class="btn-pay" id="pay-submit-btn" onclick="procesarPago()">
+          <i class="fa-solid fa-lock"></i> Pagar $<span id="pay-total-amount">0.00</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Modal detalle de pedido ══ -->
+  <div class="modal-overlay" id="modal-detalle-pedido" onclick="closeModalOutside(event,'modal-detalle-pedido')">
+    <div class="modal modal-detalle-pedido">
+      <button class="modal-close" onclick="closeModal('modal-detalle-pedido')">×</button>
+      <div class="modal-header">
+        <h2 class="modal-title" id="dp-codigo">#DN-0000</h2>
+        <span class="order-status" id="dp-status-badge">Pendiente</span>
+      </div>
+
+      <!-- Timeline de estado -->
+      <div class="dp-timeline" id="dp-timeline"></div>
+
+      <!-- Información principal -->
+      <div class="modal-body dp-body">
+        <div class="dp-meta-row">
+          <div class="dp-meta-item">
+            <i class="fa-solid fa-calendar-days"></i>
+            <div><span class="dp-meta-label">Fecha de pedido</span><span class="dp-meta-val" id="dp-fecha">—</span></div>
+          </div>
+          <div class="dp-meta-item" id="dp-updated-wrap" style="display:none">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <div><span class="dp-meta-label">Última actualización</span><span class="dp-meta-val" id="dp-updated">—</span></div>
+          </div>
+          <div class="dp-meta-item" id="dp-tracking-wrap" style="display:none">
+            <i class="fa-solid fa-truck-fast"></i>
+            <div><span class="dp-meta-label">N° seguimiento</span><span class="dp-meta-val" id="dp-tracking">—</span></div>
+          </div>
+          <div class="dp-meta-item" id="dp-cliente-wrap" style="display:none">
+            <i class="fa-solid fa-user"></i>
+            <div><span class="dp-meta-label">Cliente</span><span class="dp-meta-val" id="dp-cliente">—</span></div>
+          </div>
+        </div>
+
+        <!-- Artículos -->
+        <div class="dp-section">
+          <p class="dp-section-title"><i class="fa-solid fa-box-open"></i> Artículos del pedido</p>
+          <div id="dp-lineas" class="dp-lineas"></div>
+        </div>
+
+        <!-- Resumen de costos -->
+        <div class="dp-totals" id="dp-totals"></div>
+
+        <!-- Dirección de envío -->
+        <div class="dp-section" id="dp-dir-wrap" style="display:none">
+          <p class="dp-section-title"><i class="fa-solid fa-location-dot"></i> Dirección de envío</p>
+          <p class="dp-dir-text" id="dp-direccion">—</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-sm btn-ghost" onclick="closeModal('modal-detalle-pedido')">Cerrar</button>
+        <button class="btn-sm btn-cyan" id="dp-recomprar-btn" onclick="recomprarPedido()" style="display:none">
+          <i class="fa-solid fa-cart-plus"></i> Recomprar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="neonAlert" class="neon-alert" style="display:none"></div>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+</body>
+</html>
